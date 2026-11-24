@@ -241,17 +241,18 @@ window.Blackbox.DigitalTwin3D = (() => {
   studioGrid.position.y = -1.42;
   scene.add(studioGrid);
 
-  // Materiales procedurales de madera natural (terciado / pino / roble)
-  const baseRimWoodMat = makeWoodMaterial('#633d20', '#422611', '#321c0b', { repeatX: 2.2, repeatY: 0.6, roughness: 0.72 });
-  const baseTopWoodMat = makeWoodMaterial('#9a693f', '#744a27', '#583518', { repeatX: 2.2, repeatY: 2.2, roughness: 0.78 });
-  const rearWoodMat = makeWoodMaterial('#754a29', '#523118', '#3c210e', { repeatX: 2.0, repeatY: 1.0, roughness: 0.8 });
-  const floorWoodMat = makeWoodMaterial('#b58453', '#8f5f35', '#6e4523', { repeatX: 2.0, repeatY: 1.8, roughness: 0.82 });
-  const trimWoodMat = makeWoodMaterial('#6c4223', '#492a14', '#331c0b', { repeatX: 1.0, repeatY: 2.5, roughness: 0.74, verticalGrain: true });
-  const wallMatMain = makeWoodMaterial('#deb278', '#b88348', '#8d5d2b', { repeatX: 1.6, repeatY: 1.4, roughness: 0.8, opacity: 0.96 });
-  const wallMatFront = makeWoodMaterial('#d5a66c', '#ae783e', '#865726', { repeatX: 1.4, repeatY: 1.4, roughness: 0.78, opacity: 0.95 });
-  const roofWoodMat = makeWoodMaterial('#c89256', '#9d6834', '#75491e', { repeatX: 1.8, repeatY: 1.6, roughness: 0.78 });
-  const doorWoodMat = makeWoodMaterial('#a46838', '#75431c', '#532d0f', { repeatX: 1.0, repeatY: 1.6, roughness: 0.74, verticalGrain: true });
-  const shelfWoodMat = makeWoodMaterial('#8f5d35', '#683f1e', '#4c2c12', { repeatX: 1.5, repeatY: 1.0, roughness: 0.8 });
+  // Materiales procedurales de madera natural (terciado claro real)
+  const baseRimWoodMat = makeWoodMaterial('#7a502c', '#573619', '#3d240f', { repeatX: 2.2, repeatY: 0.6, roughness: 0.72 });
+  const baseTopWoodMat = makeWoodMaterial('#b58756', '#8d6236', '#6c4723', { repeatX: 2.2, repeatY: 2.2, roughness: 0.78 });
+  const rearWoodMat = makeWoodMaterial('#9d6f42', '#754e29', '#563618', { repeatX: 2.0, repeatY: 1.0, roughness: 0.8 });
+  const floorWoodMat = makeWoodMaterial('#c99d6b', '#a37544', '#7e552c', { repeatX: 2.0, repeatY: 1.8, roughness: 0.82 });
+  const trimWoodMat = makeWoodMaterial('#85552d', '#5c3719', '#41250e', { repeatX: 1.0, repeatY: 2.5, roughness: 0.74, verticalGrain: true });
+  const wallMatMain = makeWoodMaterial('#e6c89a', '#c49d68', '#9b7440', { repeatX: 1.6, repeatY: 1.4, roughness: 0.8, opacity: 0.96 });
+  const wallMatFront = makeWoodMaterial('#dfc08f', '#ba925c', '#926a36', { repeatX: 1.4, repeatY: 1.4, roughness: 0.78, opacity: 0.95 });
+  const roofWoodMat = makeWoodMaterial('#d5b17e', '#ae8652', '#876030', { repeatX: 1.8, repeatY: 1.6, roughness: 0.78 });
+  const doorWoodMat = makeWoodMaterial('#c69963', '#996d3b', '#704b22', { repeatX: 1.0, repeatY: 1.6, roughness: 0.74, verticalGrain: true });
+  const shelfRedMat = getMat('#c8232c', 0.42, 0.08);
+  const barrelGreenMat = getMat('#2c7a47', 0.45, 0.08);
   const winGlassMat = getMat('#8be3da', 0.14, 0.1, 0.26);
 
   // Square 30 x 30 Wooden Baseboard
@@ -335,20 +336,23 @@ window.Blackbox.DigitalTwin3D = (() => {
     addBoxMesh(1.8, 0.55, 0.75, hx, 0.25, 0.1, getMat('#e2b458', 0.3, 0.7), roofPivot);
   }
 
-  // Interior Wooden Shelving & Props (Against rear interior wall Z = -4.8)
+  // Estanterías rojas impresas en 3D + barriles verdes (igual al interior real)
   const interiorProps = new T.Group();
   scene.add(interiorProps);
-  for (const sx of [-7.0, 1.5]) {
-    addBoxMesh(5.6, 0.26, 3.6, sx, 2.8, -4.8, shelfWoodMat, interiorProps);
-    addBoxMesh(5.6, 0.26, 3.6, sx, 6.5, -4.8, shelfWoodMat, interiorProps);
-    addBoxMesh(5.6, 0.26, 3.6, sx, 10.2, -4.8, shelfWoodMat, interiorProps);
-    for (const [px, pz] of [[-2.6, -6.4], [2.6, -6.4], [-2.6, -3.2], [2.6, -3.2]]) {
-      addBoxMesh(0.28, 11.2, 0.28, sx + px, 5.7, pz, trimWoodMat, interiorProps);
+  for (const [sx, sz] of [[-11.6, 8.8], [11.6, 8.8]]) {
+    // Cuerpo vertical rojo 3D con repisas
+    addBoxMesh(2.8, 9.6, 0.26, sx, 5.1, sz - 2.0, shelfRedMat, interiorProps);
+    addBoxMesh(2.8, 9.6, 0.26, sx, 5.1, sz + 2.0, shelfRedMat, interiorProps);
+    addBoxMesh(0.24, 9.6, 4.2, sx + (sx < 0 ? -1.28 : 1.28), 5.1, sz, shelfRedMat, interiorProps);
+    for (const sy of [0.5, 2.9, 5.3, 7.7, 9.75]) {
+      addBoxMesh(2.8, 0.26, 4.2, sx, sy, sz, shelfRedMat, interiorProps);
     }
-    addBoxMesh(2.0, 1.7, 2.4, sx - 1.2, 3.8, -4.7, '#d1a36e', interiorProps);
-    addBoxMesh(1.9, 1.6, 2.3, sx + 1.2, 7.5, -4.7, '#b88652', interiorProps);
-    addBoxMesh(2.1, 1.4, 2.2, sx, 11.1, -4.7, '#7e5534', interiorProps);
   }
+  // Barriles / props verdes impresos en 3D dentro de la bodega
+  addCylMesh(0.65, 0.65, 1.8, -8.8, 1.2, 10.6, barrelGreenMat, interiorProps);
+  addCylMesh(0.65, 0.65, 1.8, 9.4, 1.2, 6.2, barrelGreenMat, interiorProps);
+  const lyingBarrel = addCylMesh(0.6, 0.6, 1.7, -5.2, 0.9, 5.8, barrelGreenMat, interiorProps);
+  lyingBarrel.rotation.z = Math.PI / 2;
 
   // -----------------------------------------------------------------------
   // SUBSYSTEM 1: CENTERED 8 CM WOODEN DOOR + REED SWITCH (PIN D2)
