@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fotos Reales Ampliables · Variantes de Sensores PIR y Reed Switch</title>
+  <style>
+    :root {
+      --bg: #091216;
+      --card-bg: #102129;
+      --border: rgba(144, 187, 177, 0.3);
+      --gold: #deb053;
+      --teal: #2ea891;
+      --text: #edf6f3;
+      --sub: #9eb2ab;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.5;
+    }
+    header {
+      max-width: 1300px;
+      margin: 0 auto 28px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    h1 { font-size: 26px; color: #fff; }
+    h1 span { color: var(--gold); }
+    .hint {
+      margin-top: 6px;
+      color: var(--sub);
+      font-size: 14px;
+    }
+    .hint strong { color: var(--gold); }
+
+    .section-title {
+      max-width: 1300px;
+      margin: 28px auto 16px;
+      font-size: 20px;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-left: 4px solid var(--gold);
+      padding-left: 12px;
+    }
+
+    .grid {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.5);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+    }
+
+    .img-box {
+      height: 240px;
+      background: #000;
+      position: relative;
+      cursor: zoom-in;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.3s ease;
+    }
+    .img-box:hover img {
+      transform: scale(1.06);
+    }
+    .zoom-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background: rgba(9, 18, 22, 0.85);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      font-weight: 700;
+      pointer-events: none;
+      backdrop-filter: blur(4px);
+    }
+
+    .card-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .chip {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+      display: inline-block;
+    }
+    h3 { font-size: 18px; margin-bottom: 8px; color: #fff; }
+    p { font-size: 13.5px; color: var(--sub); margin-bottom: 10px; }
+    .clue-box {
+      background: rgba(46, 168, 145, 0.12);
+      border-left: 3px solid var(--teal);
+      padding: 8px 12px;
+      border-radius: 0 6px 6px 0;
+      font-size: 13px;
+      color: #daf5ee;
+      margin-top: 6px;
+    }
+
+    /* LIGHTBOX MODAL (ZOOM EN PANTALLA COMPLETA) */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 10, 0.94);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      cursor: zoom-out;
+    }
+    .lightbox.active {
+      display: flex;
+    }
+    .lightbox-content {
+      position: relative;
+      max-width: 92vw;
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: default;
+    }
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 78vh;
+      object-fit: contain;
+      border-radius: 8px;
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 40px rgba(222, 176, 83, 0.35);
+      background: #000;
+    }
+    .lightbox-caption {
+      margin-top: 14px;
+      color: #fff;
+      font-size: 17px;
+      font-weight: 700;
+      text-align: center;
+      background: rgba(16, 33, 41, 0.9);
+      padding: 8px 18px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .lightbox-sub {
+      color: var(--gold);
+      font-size: 13px;
+      margin-top: 4px;
+      text-align: center;
+    }
+    .close-btn {
+      position: absolute;
+      top: -16px;
+      right: -16px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--gold);
+      color: #0c181d;
+      border: none;
+      font-size: 22px;
+      font-weight: 800;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .close-btn:hover {
+      background: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>FOTOS REALES AMPLIABLES · <span>VARIANTES DE SENSORES</span></h1>
+    <p class="hint">🔍 <strong>Haz clic sobre cualquier foto para verla en pantalla completa en tamaño gigante.</strong> Compara con lo que tienes en tu mesa.</p>
+  </header>
+
+  <!-- SECCIÓN 1: SENSOR DE PUERTA / REED SWITCH -->
+  <h2 class="section-title">1. ¿Cómo puede ser tu Sensor de Puerta? (3 opciones habituales)</h2>
+  <div class="grid">
+
+    <!-- Opción A: Ampolla de Vidrio -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/reed_glass.jpg', 'Opción 1: Reed Switch en Ampolla de Vidrio Transparente', 'Es un tubito de vidrio de 2 cm con dos laminitas adentro y patitas metálicas.')">
+        <img src="img/reed_glass.jpg" alt="Foto real de ampolla de vidrio reed switch">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Variante Más Común en Kits</span>
+          <h3>Ampolla de Vidrio Transparente</h3>
+          <p>Un tubito cilíndrico de vidrio transparente (mide unos 1.5 a 2 cm). De cada extremo sale un alambre metálico.</p>
+          <div class="clue-box">
+            <strong>Cómo probarlo:</strong> Si miras de cerca a través del vidrio, verás dos pequeñas láminas metálicas separadas. Al acercar cualquier imán, se juntan físicamente haciendo contacto.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opción B: Reed Switch MC-38 en caja blanca -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/reed_switch.jpg', 'Opción 2: Sensor Magnético MC-38 (Cajitas Plásticas)', 'Dos bloques idénticos con orejas para atornillar; uno tiene cables y el otro es el imán.')">
+        <img src="img/reed_switch.jpg" alt="Foto real de sensor magnético MC-38 con cables">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Variante de Alarma de Casa</span>
+          <h3>Sensor Magnético MC-38 (Cajas Blancas)</h3>
+          <p>Dos piezas rectangulares de plástico blanco o café con agujeros para tornillos o adhesivo en los extremos.</p>
+          <div class="clue-box">
+            <strong>Detalle:</strong> Una pieza lleva dos cables finos que van al ESP32. La otra pieza es un imán sólido idéntico sin ningún cable.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opción C: Microswitch / Final de Carrera -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/microswitch.jpg', 'Opción 3: Microswitch / Final de Carrera', 'Cajita rectangular negra con una palanquita de metal que hace clic al presionarse.')">
+        <img src="img/microswitch.jpg" alt="Foto real de microswitch final de carrera">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Variante Mecánica de Contacto</span>
+          <h3>Microswitch / Final de Carrera</h3>
+          <p>Cajita plástica negra pequeña (mide unos 2 cm) con una lámina o palanquita metálica flexible que sobresale.</p>
+          <div class="clue-box">
+            <strong>Cómo funciona:</strong> No usa imán; hace contacto físico cuando la puerta se cierra y presiona la palanquita con un "clic" audible.
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SECCIÓN 2: SENSOR PIR / MOVIMIENTO -->
+  <h2 class="section-title">2. ¿Cómo puede ser tu Sensor de Movimiento? (3 opciones habituales)</h2>
+  <div class="grid">
+
+    <!-- Opción A: HC-SR501 Clásico -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/pir_hcsr501.jpg', 'Opción 1: Sensor PIR HC-SR501 (Placa Verde Grande)', 'Cúpula blanca semiesférica tipo panal de abeja con dos potenciómetros naranja/amarillo atrás.')">
+        <img src="img/pir_hcsr501.jpg" alt="Foto real de sensor PIR HC-SR501">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Variante Estándar Grande</span>
+          <h3>PIR HC-SR501 (Con Cúpula y Tornillos)</h3>
+          <p>Placa rectangular verde de 3.2 × 2.4 cm con una cúpula blanca semiesférica (lente de Fresnel) en el frente.</p>
+          <div class="clue-box">
+            <strong>Detalle clave:</strong> En la parte trasera tiene 2 tornillitos potenciómetros naranja o amarillos para calibrar tiempo y distancia.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opción B: Lente Fresnel / Cúpula Blanca de Cerca -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/fresnel_lens.jpg', 'Detalle de Lente de Fresnel (Cúpula del PIR)', 'Cúpula blanca translúcida con grabado facetado como pelota de golf.')">
+        <img src="img/fresnel_lens.jpg" alt="Foto macro de lente fresnel para sensor PIR">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Detalle de la Cúpula Blanca</span>
+          <h3>Lente de Fresnel (Cúpula Blanca)</h3>
+          <p>Si tu PIR es el modelo miniatura (HC-SR505 o AM312), la cúpula es mucho más chica (del tamaño del dedo meñique o una uña).</p>
+          <div class="clue-box">
+            <strong>Cómo identificarlo:</strong> Busca en tus bolsitas cualquier componente que tenga esta cúpula blanca plástica redonda con relieve.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Opción C: Sensor PIR de Alarma / Módulo Compacto -->
+    <div class="card">
+      <div class="img-box" onclick="openLightbox('img/pir_dome_zoom.jpg', 'Opción 3: Sensor PIR en Módulo Compacto', 'Ventana o cúpula infrarroja con ranuras o relieve.')">
+        <img src="img/pir_dome_zoom.jpg" alt="Foto real de módulo PIR compacto">
+        <span class="zoom-badge">🔍 Clic para agrandar</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="chip">Variante de Módulo Compacto</span>
+          <h3>Módulo PIR Compacto</h3>
+          <p>Algunos kits traen el sensor PIR montado en una cajita plástica blanca o en una placa pequeña con conector blanco de 3 pines.</p>
+          <div class="clue-box">
+            <strong>Conexión:</strong> Siempre tiene 3 líneas: Alimentación (+), Tierra (-) y Salida digital (OUT).
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- LIGHTBOX MODAL CONTAINER -->
+  <div class="lightbox" id="lightboxModal" onclick="closeLightbox(event)">
+    <div class="lightbox-content" onclick="event.stopPropagation()">
+      <button class="close-btn" onclick="closeLightbox()" title="Cerrar (Esc)">×</button>
+      <img src="" alt="Foto ampliada" class="lightbox-img" id="lightboxImg">
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+      <div class="lightbox-sub" id="lightboxSub"></div>
+    </div>
+  </div>
+
+  <script>
+    function openLightbox(src, caption, sub) {
+      document.getElementById('lightboxImg').src = src;
+      document.getElementById('lightboxCaption').textContent = caption;
+      document.getElementById('lightboxSub').textContent = sub;
+      document.getElementById('lightboxModal').classList.add('active');
+    }
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.remove('active');
+    }
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeLightbox();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fotos Reales de Componentes · BLACKBOX (SurCode)</title>
+  <style>
+    :root {
+      --bg: #0a1317;
+      --card-bg: #112128;
+      --border: rgba(144, 187, 177, 0.28);
+      --gold: #deb053;
+      --teal: #2ea891;
+      --text: #edf6f3;
+      --sub: #9db2ab;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      padding: 24px;
+      line-height: 1.45;
+    }
+    header {
+      max-width: 1400px;
+      margin: 0 auto 26px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    h1 { font-size: 26px; color: #fff; }
+    h1 span { color: var(--gold); }
+    p.subtitle { color: var(--sub); font-size: 14px; margin-top: 4px; }
+    .badge {
+      background: rgba(222, 176, 83, 0.15);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .grid {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+      gap: 22px;
+    }
+    .item-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+    .item-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--gold);
+    }
+    .photo-wrap {
+      height: 220px;
+      background: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+    }
+    .photo-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.25s ease;
+    }
+    .item-card:hover .photo-wrap img {
+      transform: scale(1.05);
+    }
+    .photo-tag {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(10, 19, 23, 0.85);
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      padding: 4px 9px;
+      border-radius: 5px;
+      font-size: 11px;
+      font-weight: 700;
+      backdrop-filter: blur(4px);
+    }
+    .card-body {
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+    .cat-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--teal);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 4px;
+      display: block;
+    }
+    .item-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .id-clue {
+      background: rgba(46, 168, 145, 0.12);
+      border-left: 3px solid var(--teal);
+      padding: 8px 12px;
+      font-size: 13px;
+      color: #d8f5ee;
+      border-radius: 0 6px 6px 0;
+      margin-bottom: 12px;
+    }
+    .specs-list {
+      list-style: none;
+      font-size: 12.5px;
+      color: var(--sub);
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .specs-list li strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div>
+      <h1>FOTOS REALES DE COMPONENTES · <span>BLACKBOX (SurCode)</span></h1>
+      <p class="subtitle">Guía fotográfica para reconocer y apartar tus componentes en el laboratorio</p>
+    </div>
+    <span class="badge">9 COMPONENTES FÍSICOS</span>
+  </header>
+
+  <div class="grid">
+
+    <!-- 1. ESP32-S3 -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/esp32.jpg" alt="Foto real de la placa de desarrollo ESP32">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Controlador Central</span>
+          <h2 class="item-title">ESP32-S3 DevKit</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Placa alargada verde/negra con un rectángulo metálico plateado en el centro, dos filas de pines a los lados y puerto USB-C en el borde.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Detalle:</strong> La chapa metálica plateada dice <em>"ESP32-S3"</em> o <em>"WROOM"</em>.</li>
+          <li><strong>Pines:</strong> Dos tiras largas con 44 patitas en total.</li>
+          <li><strong>Función:</strong> Cerebro que evalúa los sensores y controla la cerradura.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 2. RFID RC522 -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/rfid_rc522.jpg" alt="Foto real del lector RFID RC522 con tarjeta y llavero">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Control de Acceso</span>
+          <h2 class="item-title">Lector RFID RC522 + Tarjeta y Llavero</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Placa delgada de color <strong>azul brillante</strong> con pistas de cobre circulares en espiral (la antena).
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Accesorios:</strong> Viene con una tarjeta plástica blanca (tipo Bip) y un llavero azul con agujero.</li>
+          <li><strong>Pines:</strong> Tira de 8 patitas metálicas en un extremo.</li>
+          <li><strong>Frecuencia:</strong> 13.56 MHz (lee a 2-4 cm de distancia).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 3. PIR HC-SR501 -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/pir_sensor.jpg" alt="Foto real del sensor de movimiento PIR con lente Fresnel">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Sensor de Presencia</span>
+          <h2 class="item-title">Sensor PIR HC-SR501</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Es inconfundible: tiene una <strong>cúpula semiesférica de plástico blanco</strong> (parece una media pelota de golf o un ojo) montada en una placa verde.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Atrás:</strong> Tiene dos potenciómetros (tornillos de ajuste) color naranja o amarillo.</li>
+          <li><strong>Pines:</strong> 3 patitas (`VCC`, `OUT`, `GND`).</li>
+          <li><strong>Función:</strong> Detecta calor corporal y movimiento en el interior.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 4. Reed Switch -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/reed_switch.jpg" alt="Foto real del sensor magnético Reed Switch">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Sensor de Puerta</span>
+          <h2 class="item-title">Reed Switch Magnético (MC-38)</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Son <strong>dos piezas idénticas de plástico blanco</strong> (o dos bloques alargados). Una pieza tiene 2 cables y la otra es el imán suelto.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Detalle:</strong> Si te pasaron la versión en cápsula de vidrio, es un tubito transparente de 2 cm con 2 laminitas adentro.</li>
+          <li><strong>Función:</strong> Detecta el momento exacto en que se abre la puerta de la bodega.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5. Servo SG90 -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/sg90_servo.jpg" alt="Foto real del microservo SG90 azul">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Actuador / Pestillo</span>
+          <h2 class="item-title">Microservo SG90 (9g)</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Motorcito diminuto con <strong>carcasa de plástico azul translúcido</strong> y un cable plano de 3 colores (café, rojo y naranja).
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Accesorios:</strong> Viene en una bolsita plástica con bracitos/aspas de plástico blanco y tornillitos pequeños.</li>
+          <li><strong>Función:</strong> Gira 90° para simular el desbloqueo del pestillo de la puerta.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 6. OLED SSD1306 -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/oled_display.jpg" alt="Foto real de la pantalla OLED 0.96 pulgadas">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Visualización</span>
+          <h2 class="item-title">Pantalla OLED 0.96" I2C</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Pantallita de vidrio negro pequeña (aproximadamente 2.5 × 2.5 cm) montada sobre una placa azul con <strong>solo 4 pines arriba</strong>.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Pines (4):</strong> `GND`, `VCC`, `SCL`, `SDA` (comunicación I2C).</li>
+          <li><strong>Pantalla:</strong> Resolución de 128 × 64 píxeles (texto nítido celeste/blanco).</li>
+          <li><strong>Función:</strong> Muestra si el acceso fue autorizado o el tipo de alerta.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 7. Buzzer -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/buzzer.jpg" alt="Foto real del zumbador buzzer piezoeléctrico">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Alarma Acústica</span>
+          <h2 class="item-title">Buzzer (Zumbador 5V)</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlo:</strong> Cilindro de plástico negro (como una pastilla redonda) con un orificio pequeño en el centro superior y dos patitas metálicas abajo.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Polaridad:</strong> La pata más larga es el positivo `+`.</li>
+          <li><strong>Función:</strong> Suena intermitente como sirena cuando hay intrusión.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 8. LEDs y Resistencias -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/leds.jpg" alt="Foto real de diodos LEDs de 5mm">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Indicadores Ópticos</span>
+          <h2 class="item-title">LEDs 5mm (Verde, Amarillo, Rojo) + Resistencias</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlos:</strong> Focos pequeños transparentes o de color con dos patas metálicas largas. Las resistencias son cilindros beige pequeños con rayitas de color.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Colores:</strong> 1 Verde (Desarmado), 1 Amarillo (Armado), 1 Rojo (Intrusión).</li>
+          <li><strong>Resistencias:</strong> 3 unidades de 220Ω o 330Ω (franjas rojo-rojo-marrón).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 9. Protoboard y Dupont -->
+    <div class="item-card">
+      <div class="photo-wrap">
+        <img src="img/breadboard.jpg" alt="Foto real de la protoboard de pruebas y cables dupont">
+        <span class="photo-tag">FOTO REAL</span>
+      </div>
+      <div class="card-body">
+        <div>
+          <span class="cat-tag">Montaje y Conexión</span>
+          <h2 class="item-title">Protoboard + Cables Dupont</h2>
+          <div class="id-clue">
+            <strong>Cómo reconocerlos:</strong> Placa plástica blanca con cientos de agujeros. Los cables vienen en un manojo multicolor con cabezales negros plásticos cuadrados.
+          </div>
+        </div>
+        <ul class="specs-list">
+          <li><strong>Tipos de cable:</strong> Macho-Hembra (imprescindibles para conectar los sensores) y Macho-Macho.</li>
+          <li><strong>Función:</strong> Permite conectar todo el circuito de forma ordenada sin soldadura.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

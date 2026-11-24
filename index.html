@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BLACKBOX · Centro de Control y Gemelo Digital 3D</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- =====================================================================
+       1. TOP APPLICATION HEADER
+       ===================================================================== -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-mark">
+        <img src="img/logo_surcode_blackbox.jpg" alt="Logo oficial SurCode BLACKBOX" />
+      </div>
+      <div>
+        <h1 class="brand-name">BLACKBOX <span>· Bodega 01</span></h1>
+        <div class="brand-meta">SurCode · Control de Acceso y Telemetría IoT</div>
+      </div>
+    </div>
+
+    <nav class="nav-pills" aria-label="Vistas del sistema">
+      <button class="nav-pill active" data-tab="gemelo">
+        Gemelo Digital 3D y Telemetría
+      </button>
+      <button class="nav-pill" data-tab="bd">
+        Base de Datos de Eventos
+        <span class="nav-count" id="dbCountBadge">0</span>
+      </button>
+      <button class="nav-pill" data-tab="calidad">
+        Diagnóstico y Pruebas Operativas
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="link-status" id="connPill" title="Estado de enlace con el controlador">
+        <span class="link-dot"></span>
+        <span id="connLabel">Controlador: En línea</span>
+        <span class="tag tag-ok" id="latencyBadge">115200 bps · OK</span>
+      </div>
+      <button class="btn btn-primary" id="serialBtn" title="Vincular placa real por puerto USB Serial (115200 bps)">
+        Conectar Placa USB
+      </button>
+      <button class="btn" id="themeBtn" title="Cambiar entre modo oscuro y claro para proyector">
+        Modo Proyector
+      </button>
+    </div>
+  </header>
+
+  <!-- =====================================================================
+       2. MAIN WORKSPACE
+       ===================================================================== -->
+  <main class="workspace">
+
+    <!-- DOMINANT SYSTEM STATUS STRIP (Hero Focal Point) -->
+    <section class="telemetry-strip" id="statusBanner" data-state="ARMADO">
+      <div class="state-block">
+        <span class="state-orb" id="stateDot"></span>
+        <div>
+          <span class="eyebrow">Estado Operativo del Recinto</span>
+          <h2 class="state-heading" id="stateTitle">ARMADO</h2>
+        </div>
+      </div>
+
+      <div>
+        <span class="eyebrow">Diagnóstico en Tiempo Real</span>
+        <p class="state-summary" id="stateNotice">
+          Recinto protegido. Acerca una credencial RFID MIFARE autorizada (Botón 1) para desarmar la bodega y liberar el pestillo SG90, o haz clic en cualquier pieza de la maqueta 3D para inspeccionar su cableado y código.
+        </p>
+      </div>
+
+      <div class="physical-replica">
+        <div class="led-trio" title="Espejo de LEDs físicos en Pines D5, D6 y D7">
+          <div class="led-unit">
+            <div class="led-lamp green" id="ledGreen"></div>
+            <span>D5 · OK</span>
+          </div>
+          <div class="led-unit">
+            <div class="led-lamp yellow on" id="ledYellow"></div>
+            <span>D6 · ARM</span>
+          </div>
+          <div class="led-unit">
+            <div class="led-lamp red" id="ledRed"></div>
+            <span>D7 · ALRM</span>
+          </div>
+        </div>
+
+        <div class="oled-bezel" title="Espejo en tiempo real de la pantalla OLED 0.96&quot; I2C (SDA=A4, SCL=A5)">
+          <div class="oled-meta">
+            <span>SSD1306 I2C 0x3C</span>
+            <span>128×64</span>
+          </div>
+          <div class="oled-l1" id="oledLine1">BLACKBOX</div>
+          <div class="oled-l2" id="oledLine2">ESPERANDO TARJETA</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         TAB 1: GEMELO DIGITAL 3D Y TELEMETRÍA EN VIVO
+         =================================================================== -->
+    <div class="tab-view active" id="tab-gemelo">
+      <div class="stage-layout">
+
+        <!-- LEFT COLUMN: 3D Interactive Maqueta + Component Inspector -->
+        <div class="panel">
+          <div class="panel-head">
+            <div>
+              <span class="eyebrow">Maqueta Interactiva a Escala (Base 30 × 30 cm · Altura ~20 cm · Electrónica Trasera)</span>
+              <h3 class="panel-title">Gemelo Digital 3D · Puerta Central, Ventanas Laterales y Techo Abatible</h3>
+            </div>
+          </div>
+
+          <!-- Component Selector Ribbon -->
+          <div class="component-ribbon" role="tablist" aria-label="Selector de componentes físicos">
+            <button class="comp-btn active" data-comp="overview"><i></i>Maqueta 360°</button>
+            <button class="comp-btn" data-comp="esp32"><i></i>Placa + Protoboard (Atrás)</button>
+            <button class="comp-btn" data-comp="rfid"><i></i>Lector RFID RC522 (SPI)</button>
+            <button class="comp-btn" data-comp="oled_leds"><i></i>OLED I2C + 3 LEDs</button>
+            <button class="comp-btn" data-comp="servo"><i></i>Cerradura SG90 (D3)</button>
+            <button class="comp-btn" data-comp="reed"><i></i>Sensor Puerta (D2)</button>
+            <button class="comp-btn" data-comp="pir"><i></i>Sensor Interior (D4)</button>
+            <button class="comp-btn" data-comp="buzzer"><i></i>Buzzer / Sirena (D8)</button>
+          </div>
+
+          <!-- 3D WebGL Viewport -->
+          <div class="viewport-frame">
+            <div id="threeStage"></div>
+
+            <div class="hud-top">
+              <div class="hud-pill" id="hudFocusLabel">
+                Vista activa: Maqueta Completa — BLACKBOX (Bodega 01)
+              </div>
+              <div class="hud-toolbar">
+                <button class="hud-btn" id="btnToggleWalls" title="Ver a través de los muros para observar el interior">
+                  Muros Rayos-X
+                </button>
+                <button class="hud-btn active" id="btnToggleRoof" title="Abrir o cerrar el techo abatible con bisagra hacia arriba">
+                  Cerrar Techo
+                </button>
+                <button class="hud-btn active" id="btnTogglePirCone" title="Mostrar u ocultar el volumen de cobertura del sensor interior">
+                  Cono Sensor: ON
+                </button>
+                <button class="hud-btn" id="btnOpenLid" title="Abrir o cerrar la tapa de la carcasa impresa en 3D en la zona trasera">
+                  Abrir Tapa 3D
+                </button>
+              </div>
+            </div>
+
+            <div class="hud-bottom">
+              <div class="hud-pill">
+                Arrastrar: Rotar 360° · Rueda: Zoom · Clic en pieza 3D: Enfocar e inspeccionar
+              </div>
+              <div class="hud-pill">
+                Madera · Base 30 × 30 cm · Alto ~20 cm · Puerta ~8 cm
+              </div>
+            </div>
+          </div>
+
+          <!-- Component Technical Inspector (Function + Pinout + Firmware Code) -->
+          <div class="inspector-card">
+            <div class="inspector-header">
+              <div>
+                <span class="eyebrow" id="inspCategory">GEMELO DIGITAL DE MADERA · BASE 30 × 30 CM · ALTURA 20 CM</span>
+                <h4 class="inspector-name" id="inspTitle">Maqueta Completa — BLACKBOX (Bodega 01)</h4>
+                <div class="pin-badges" id="inspBadges"></div>
+              </div>
+              <button class="btn btn-primary" id="btnTestSelectedComp">
+                Probar Componente en 3D
+              </button>
+            </div>
+
+            <div class="inspector-body">
+              <div class="inspector-text">
+                <p id="inspDescription"></p>
+                <ul class="inspector-list" id="inspSpecs"></ul>
+              </div>
+
+              <div class="code-box">
+                <div class="code-topbar">
+                  <span id="inspCodeFile">Sentinel_Access_ArduinoUno.ino</span>
+                  <button class="btn" id="btnCopyCode" style="padding: 2px 8px; font-size: 11px;">Copiar código</button>
+                </div>
+                <pre class="code-pre"><code id="inspCodeBlock"></code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN: Control Console + Live Telemetry + Recent Activity -->
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+
+          <!-- 1. Control & Simulation Actions -->
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Simulador Operativo y Controles de Escenario</span>
+                <h3 class="panel-title">Acciones del Recinto (Teclas 1 al 6)</h3>
+              </div>
+              <button class="btn" id="btnReset" title="Restaurar estado inicial (Tecla R)">
+                Reiniciar <kbd>R</kbd>
+              </button>
+            </div>
+
+            <div class="scenario-grid">
+              <button class="scenario-btn" id="actValidCard">
+                <div class="scenario-top">
+                  <span>1. Tarjeta Autorizada</span>
+                  <kbd>1</kbd>
+                </div>
+                <small>UID válido · Desarma y abre SG90 a 90°</small>
+              </button>
+
+              <button class="scenario-btn" id="actInvalidCard">
+                <div class="scenario-top">
+                  <span>2. Tarjeta Rechazada</span>
+                  <kbd>2</kbd>
+                </div>
+                <small>UID no registrado · Aviso sin falsa alarma</small>
+              </button>
+
+              <button class="scenario-btn" id="actToggleDoor">
+                <div class="scenario-top">
+                  <span id="lblToggleDoor">3. Abrir / Forzar Puerta</span>
+                  <kbd>3</kbd>
+                </div>
+                <small>Conmuta sensor en D2 (dispara alarma si está armado)</small>
+              </button>
+
+              <button class="scenario-btn" id="actPirMotion">
+                <div class="scenario-top">
+                  <span>4. Activar Sensor Interior</span>
+                  <kbd>4</kbd>
+                </div>
+                <small>Pulso en Pin D4 (alerta interior en estado armado)</small>
+              </button>
+
+              <button class="scenario-btn" id="actCommFail">
+                <div class="scenario-top">
+                  <span id="lblCommFail">5. Simular Caída de Enlace</span>
+                  <kbd>5</kbd>
+                </div>
+                <small>Prueba respaldo autónomo local sin red</small>
+              </button>
+
+              <button class="scenario-btn" id="actArmSystem">
+                <div class="scenario-top">
+                  <span>6. Armar Sistema</span>
+                  <kbd>6</kbd>
+                </div>
+                <small>Bloquea pestillo a 0° y activa vigilancia</small>
+              </button>
+            </div>
+          </div>
+
+          <!-- 2. Real-Time Sensor Telemetry -->
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Lecturas Digitales y Buses Activos</span>
+                <h3 class="panel-title">Telemetría de Sensores y Actuadores (Clic para ver en 3D)</h3>
+              </div>
+            </div>
+
+            <div class="sensor-grid" style="margin-bottom: 0;">
+              <div class="sensor-tile" onclick="selectComponent('rfid')" title="Clic para enfocar el lector RFID RC522 en 3D">
+                <div class="sensor-tile-head">
+                  <span>Lector RFID RC522</span>
+                  <span class="sensor-gpio">SPI D9–D13</span>
+                </div>
+                <div class="sensor-reading" id="valRfid">Sin lectura</div>
+                <div class="sensor-caption" id="subRfid">Esperando credencial 13.56 MHz</div>
+              </div>
+
+              <div class="sensor-tile" onclick="selectComponent('reed')" title="Clic para enfocar el sensor de puerta en 3D">
+                <div class="sensor-tile-head">
+                  <span>Sensor de Puerta</span>
+                  <span class="sensor-gpio">PIN D2</span>
+                </div>
+                <div class="sensor-reading" id="valDoor">CERRADA (LOW)</div>
+                <div class="sensor-caption" id="subDoor">Contacto de marco cerrado</div>
+              </div>
+
+              <div class="sensor-tile" onclick="selectComponent('pir')" title="Clic para enfocar el sensor interior en 3D">
+                <div class="sensor-tile-head">
+                  <span>Sensor Interior</span>
+                  <span class="sensor-gpio">PIN D4</span>
+                </div>
+                <div class="sensor-reading" id="valPir">NORMAL (REPOSO)</div>
+                <div class="sensor-caption" id="subPir">Vigilancia interior activa</div>
+              </div>
+
+              <div class="sensor-tile" onclick="selectComponent('servo')" title="Clic para enfocar el servomotor SG90 en 3D">
+                <div class="sensor-tile-head">
+                  <span>Cerradura SG90</span>
+                  <span class="sensor-gpio">PWM D3</span>
+                </div>
+                <div class="sensor-reading" id="valServo">BLOQUEADA (0°)</div>
+                <div class="sensor-caption" id="subServo">Buzzer D8: Silencioso</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. Recent Event Feed -->
+          <div class="panel">
+            <div class="panel-head">
+              <div>
+                <span class="eyebrow">Registro Persistente en Tiempo Real</span>
+                <h3 class="panel-title">Últimos Eventos Registrados</h3>
+              </div>
+              <button class="btn" onclick="switchTab('bd')">
+                Ver Base de Datos →
+              </button>
+            </div>
+            <ul class="feed-list" id="recentEventsList"></ul>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         TAB 2: BASE DE DATOS PERSISTENTE DE EVENTOS
+         =================================================================== -->
+    <div class="tab-view" id="tab-bd">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Almacenamiento Local Persistente · Exportación Estructurada</span>
+            <h3 class="panel-title">Base de Datos Histórica de Accesos, Intrusiones y Telemetría</h3>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <input type="text" id="dbSearchInput" placeholder="Buscar por UID, sensor o detalle..." />
+            <select id="dbFilterType" aria-label="Filtrar por categoría">
+              <option value="ALL">Todas las categorías</option>
+              <option value="ACCESO_OK">Accesos Autorizados</option>
+              <option value="ACCESO_DENEGADO">Accesos Denegados</option>
+              <option value="INTRUSIÓN">Alertas de Intrusión</option>
+              <option value="FALLA_RED">Eventos de Enlace</option>
+              <option value="SISTEMA">Eventos de Sistema</option>
+            </select>
+            <button class="btn btn-primary" id="btnExportCsv">Exportar CSV</button>
+            <button class="btn" id="btnExportJson">Exportar JSON</button>
+            <button class="btn btn-danger" id="btnClearDb">Limpiar Historial</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fecha y Hora</th>
+                <th>Categoría</th>
+                <th>Sensor / Origen</th>
+                <th>UID RFID</th>
+                <th>Estado Resultante</th>
+                <th>Puerta</th>
+                <th>Detalle del Registro</th>
+              </tr>
+            </thead>
+            <tbody id="dbTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================================================================
+         TAB 3: DIAGNÓSTICO Y PROTOCOLO DE PRUEBAS OPERATIVAS
+         =================================================================== -->
+    <div class="tab-view" id="tab-calidad">
+      <div class="panel">
+        <div class="panel-head">
+          <div>
+            <span class="eyebrow">Verificación de Sensores, Persistencia, Comunicación y Visualización</span>
+            <h3 class="panel-title">Protocolo de Diagnóstico y Matriz de Pruebas del Sistema</h3>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <button class="btn btn-primary" id="btnRunAllTests">
+              Ejecutar Autoprueba de Sensores y BD
+            </button>
+            <button class="btn" id="btnExportTests">
+              Exportar Reporte CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 18%;">Prueba Operativa</th>
+                <th style="width: 30%;">Comportamiento Esperado</th>
+                <th style="width: 36%;">Resultado Obtenido en Laboratorio (Editable)</th>
+                <th style="width: 16%;">Estado</th>
+              </tr>
+            </thead>
+            <tbody id="testMatrixBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="vendor/three.min.js"></script>
+  <script src="src/event-bus.js"></script>
+  <script src="src/data/event-repository.js"></script>
+  <script src="src/domain/security-fsm.js"></script>
+  <script src="src/adapters/serial-adapter.js"></script>
+  <script src="src/presentation/digital-twin-3d.js"></script>
+  <script src="src/presentation/dashboard-ui.js"></script>
+</body>
+</html>
